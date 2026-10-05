@@ -10,72 +10,90 @@ permissions:
 
 jobs:
   refresh:
-    name: Aggregate monorepo data
+    name: Collect repo content (trees + READMEs)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch combined data from all monorepos
+      - name: Fetch files, folders and knowledge from all repos
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            const repos = ['quant-econ', 'news-dashboards', 'agent-tools', 'geo-unity'];
+
+            const targets = [
+              { name: 'quant-econ' },
+              { name: 'news-dashboards' },
+              { name: 'agent-tools' },
+              { name: 'mobile-android' },
+              { name: 'geo-unity' },
+              { name: 'UHI_SAUDI', pinned: true },
+              { name: '1ooo', pinned: true },
+              { name: 'future_proofing', pinned: true },
+              { name: 'SectorShift', pinned: true },
+            ];
+
             const data = { generated_at: new Date().toISOString(), repos: [] };
 
-            for (const name of repos) {
-              const { data: repo } = await github.rest.repos.get({ owner: 'muxd22-alt', repo: name });
-              const { data: langs } = await github.rest.repos.listLanguages({ owner: 'muxd22-alt', repo: name });
-              const { data: tree } = await github.rest.git.getTree({
-                owner: 'muxd22-alt', repo: name, tree_sha: repo.default_branch, recursive: '1',
-              });
-
-              const member_stats = {};
-              for (const t of tree.tree) {
-                if (t.type !== 'blob' || !t.path.startsWith('repos/')) continue;
-                const m = t.path.split('/')[1];
-                if (!m) continue;
-                member_stats[m] = member_stats[m] || { files: 0, bytes: 0 };
-                member_stats[m].files += 1;
-                member_stats[m].bytes += t.size || 0;
+            async function getReadme(repo, dirPath) {
+              try {
+                const { data } = await github.rest.repos.getReadme({
+                  owner: 'muxd22-alt', repo,
+                  ...(dirPath ? { dir_path: dirPath } : {}),
+                });
+                const buf = Buffer.from(data.content, 'base64').toString('utf-8');
+                return buf.slice(0, 8000);
+              } catch (e) {
+                return null;
               }
-
-              const { data: commits } = await github.rest.repos.listCommits({
-                owner: 'muxd22-alt', repo: name, per_page: 20,
-              });
-              const { data: runs } = await github.rest.actions.listWorkflowRunsForRepo({
-                owner: 'muxd22-alt', repo: name, per_page: 6,
-              });
-
-              data.repos.push({
-                name,
-                description: repo.description,
-                url: repo.html_url,
-                stars: repo.stargazers_count,
-                size_kb: repo.size,
-                pushed_at: repo.pushed_at,
-                archived: repo.archived,
-                languages: langs,
-                members: Object.keys(member_stats),
-                member_stats,
-                commits: commits.map(c => ({
-                  sha: c.sha.slice(0, 7),
-                  msg: c.commit.message.split('\n')[0],
-                  date: c.commit.author.date,
-                  author: c.commit.author.name,
-                })),
-                runs: runs.workflow_runs.map(r => ({
-                  name: r.name,
-                  status: r.status,
-                  conclusion: r.conclusion,
-                  url: r.html_url,
-                  created_at: r.created_at,
-                })),
-              });
             }
 
-            fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
-            core.info(`collected ${data.repos.length} repos`);
+            for (const t of targets) {
+              const { data: repo } = await github.rest.repos.get({ owner: 'muxd22-alt', repo: t.name });
+
+              const { data: tree } = await github.rest.git.getTree({
+                owner: 'muxd22-alt', repo: t.name,
+                tree_sha: repo.default_branch, recursive: '1',
+              });
+
+              const files = tree.tree
+                .filter(e => e.type === 'blob')
+                .map(e => [e.path, e.size || 0]);
+
+              const root_readme = await getReadme(t.name, '');
+
+              let members = [];
+              if (t.pinned) {
+                members = [{ name: t.name, path: '', readme: root_readme }];
+              } else {
+                const names = [...new Set(
+                  files.map(f => f[0].startsWith('repos/') ? f[0].split('/')[1] : null)
+                       .filter(Boolean)
+                )].sort();
+                for (const m of names) {
+                  members.push({
+                    name: m,
+                    path: 'repos/' + m,
+                    readme: await getReadme(t.name, 'repos/' + m),
+                  });
+                }
+              }
+
+              data.repos.push({
+                name: t.name,
+                url: repo.html_url,
+                pinned: !!t.pinned,
+                description: repo.description,
+                default_branch: repo.default_branch,
+                root_readme,
+                members,
+                files,
+                truncated: !!tree.truncated,
+              });
+              core.info(`${t.name}: ${files.length} files, ${members.length} members`);
+            }
+
+            fs.writeFileSync('data.json', JSON.stringify(data));
 
       - name: Commit refreshed data
         run: |

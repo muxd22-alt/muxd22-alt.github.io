@@ -1,25 +1,31 @@
 # muxd22-alt.github.io
 
-Shared **MUXD Knowledge Dashboard** — one combined view over the consolidated
-monorepos (excluding `mobile-android`, which is apps, not dashboards):
+**MUXD Content Dashboard** — a unified view of the *content* itself (files,
+folders, READMEs) across all repos, not of the monorepo metadata.
 
-- [quant-econ](https://github.com/muxd22-alt/quant-econ)
-- [news-dashboards](https://github.com/muxd22-alt/news-dashboards)
-- [agent-tools](https://github.com/muxd22-alt/agent-tools)
-- [geo-unity](https://github.com/muxd22-alt/geo-unity)
+Indexed repos:
 
-## What it shows
+- monorepos: `quant-econ`, `news-dashboards`, `agent-tools`, `mobile-android`, `geo-unity`
+- pinned standalones: `UHI_SAUDI`, `1ooo`, `future_proofing`, `SectorShift`
 
-- cards per monorepo: members, files, size, stars, languages, last push, CI badge
-- recent commits across all monorepos in one table
-- latest workflow runs (the shared CI / daily-digest actions)
-- full index of every `repos/<member>/` folder with file counts
+## What you get
+
+- **Search across everything** — one box finds members, folders and files in any repo
+- **Unified sidebar tree** — every repo → every member → every folder, lazy-loaded
+- **Member pages** — the member's README rendered in full + its complete file list
+- **File viewer** — any file streamed live from `raw.githubusercontent.com`,
+  Markdown rendered, images shown, code in a monospace preview
+- Home cards for all 44+ members with README excerpt, size and language chips
 
 ## How it works
 
 `.github/workflows/refresh.yml` runs twice daily (06:15 / 18:15 UTC) and on
-demand: it aggregates repo metadata, git trees, commits and workflow runs from
-the four monorepos into `data.json`, commits it back, and GitHub Pages serves
-`index.html` + `data.json` at https://muxd22-alt.github.io
+demand. It collects, for every repo:
 
-No build step, no dependencies — static HTML/CSS/JS only.
+- the complete recursive git tree (`path` + `size` for every blob)
+- the README of the repo and of every `repos/<member>/` folder
+
+into `data.json`. The page itself is static HTML/CSS/JS — file bodies are
+fetched from GitHub raw on click, so the dashboard never stores copies.
+
+Served by GitHub Pages at https://muxd22-alt.github.io

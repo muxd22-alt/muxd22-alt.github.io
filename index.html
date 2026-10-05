@@ -3,40 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MUXD Knowledge Dashboard</title>
+<title>MUXD Content Dashboard</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 </head>
 <body>
 <header>
-  <h1>MUXD Knowledge Dashboard</h1>
-  <p class="sub">Combined results of the consolidated monorepos &middot; generated from GitHub <span id="generated">…</span></p>
+  <div class="brand">
+    <h1>MUXD Content Dashboard</h1>
+    <p class="sub">Every file, folder and README across all repos — unified. <span id="generated"></span></p>
+  </div>
+  <div class="searchbox">
+    <input id="search" type="search" placeholder="Search files, folders, members across all repos…" autocomplete="off">
+    <div id="results" class="results" hidden></div>
+  </div>
 </header>
 
-<main>
-  <section id="cards" class="grid"></section>
+<div class="layout">
+  <aside id="sidebar">
+    <div class="side-title">Repositories</div>
+    <nav id="tree"></nav>
+  </aside>
 
-  <section class="panel">
-    <h2>Recent commits <span class="hint">(all monorepos)</span></h2>
-    <table id="commits"><thead>
-      <tr><th>repo</th><th>date</th><th>author</th><th>message</th></tr>
-    </thead><tbody></tbody></table>
-  </section>
-
-  <section class="panel">
-    <h2>CI status <span class="hint">(latest workflow runs)</span></h2>
-    <table id="runs"><thead>
-      <tr><th>repo</th><th>workflow</th><th>state</th><th>result</th></tr>
-    </thead><tbody></tbody></table>
-  </section>
-
-  <section class="panel">
-    <h2>Members index</h2>
-    <div id="members"></div>
-  </section>
-</main>
+  <main id="content"></main>
+</div>
 
 <footer>
-  <p>Auto-refreshed twice daily by GitHub Actions &middot; source: <a href="https://github.com/muxd22-alt/muxd22-alt.github.io">muxd22-alt.github.io</a></p>
+  <p id="footer-stats"></p>
+  <p>Content aggregated from the source repos by GitHub Actions · <a href="https://github.com/muxd22-alt/muxd22-alt.github.io">muxd22-alt.github.io</a></p>
 </footer>
 
 <script src="app.js"></script>
