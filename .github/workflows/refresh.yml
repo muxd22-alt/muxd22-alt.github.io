@@ -124,7 +124,7 @@ jobs:
                 if (!t.pinned && !path.startsWith('repos/')) continue;
                 let tier = KDATA.test(path) ? 0 : KDOC.test(path) ? 1 : KTABLE.test(path) ? 2 : -1;
                 if (extraSet.has(path)) tier = -2;
-                if (tier < 0) continue;
+                if (tier === -1) continue;
                 const member = t.pinned ? t.name : path.split('/')[1];
                 const memberPath = t.pinned ? '' : 'repos/' + member;
                 if (!byMember.has(member)) byMember.set(member, { member, memberPath, paths: [] });
