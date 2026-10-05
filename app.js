@@ -2,6 +2,9 @@ let DATA = null;
 let REPOS = new Map();      // name -> repo object
 let MEMBERS = [];           // flattened member cards
 let TREES = new Map();      // repo -> {dirs:Map, files:[{name,size}]}
+let KNOW = [];              // knowledge sources (data files with actual content)
+let KNOW_MAP = new Map();   // "repo/member" -> source
+const REPO_ORDER = ["quant-econ", "news-dashboards", "agent-tools", "mobile-android", "geo-unity"];
 const RAW = (repo, branch, path) =>
   `https://raw.githubusercontent.com/muxd22-alt/${repo}/${branch}/` +
   path.split("/").map(encodeURIComponent).join("/");
@@ -86,6 +89,13 @@ async function load() {
       });
     }
   }
+  KNOW = DATA.knowledge || [];
+  for (const k of KNOW) {
+    KNOW_MAP.set(k.repo + "/" + k.member, k);
+    const m = MEMBERS.find(x => x.repo === k.repo && x.name === k.member);
+    if (m) m.knowledge = k;
+  }
+
   document.getElementById("footer-stats").textContent =
     `${DATA.repos.length} repos · ${MEMBERS.length} members · ${totalFiles.toLocaleString()} files indexed · ` +
     `raw content streamed from GitHub on demand`;
@@ -207,6 +217,7 @@ function viewHome() {
       <h3>${esc(m.title)}
         <span class="repo-tag">${esc(m.repo)}</span>
         ${m.pinned ? '<span class="repo-tag pinned-tag">pinned</span>' : ""}
+        ${m.knowledge ? '<span class="repo-tag k-tag">knowledge</span>' : ""}
       </h3>
       <p>${esc(m.desc)}</p>
       <div class="meta">
@@ -215,6 +226,7 @@ function viewHome() {
       </div>
     </div>`;
   content().innerHTML = `
+    ${knowledgeSection()}
     <div class="section-title">Members across all monorepos</div>
     <div class="grid">${monos.sort((a, b) => a.repo.localeCompare(b.repo) || a.name.localeCompare(b.name)).map(card).join("")}</div>
     <div class="section-title">Pinned standalone repos</div>
@@ -232,6 +244,8 @@ function viewMember(repoName, memberName) {
   const shown = files.slice(0, 400);
   content().innerHTML = `
     <div class="crumb"><a href="#/">dashboard</a> / <a href="#/">${esc(repoName)}</a> / ${esc(m.name)}</div>
+    ${m.knowledge ? `<div class="section-title">Knowledge — extracted content &amp; results</div>${kcard(m.knowledge)}` : ""}
+    <div class="section-title">README</div>
     <div class="readme">${m.readme ? md(m.readme) : `<p class="notice">No README in <code>${esc(m.prefix || "(repo root)")}</code>.</p>`}</div>
     <div class="filelist">
       <h3>${m.files} files · ${fmtBytes(m.bytes)}${files.length > shown.length ? ` · showing first ${shown.length}` : ""}</h3>
@@ -280,6 +294,234 @@ async function viewFile(repoName, path) {
   } catch (err) {
     box.innerHTML = `<p class="error">Could not load file (${esc(err.message)}). <a href="${esc(url)}" target="_blank" rel="noopener">Try raw link</a>.</p>`;
   }
+}
+
+/* ---------- knowledge rendering ---------- */
+
+function clamp(text, n) {
+  text = String(text || "");
+  return text.length > n ? text.slice(0, n) + "…" : text;
+}
+
+function safeUrl(u) {
+  try {
+    const x = new URL(u, "https://muxd22-alt.github.io/");
+    return /^https?:$/.test(x.protocol) ? x.href : null;
+  } catch (e) { return null; }
+}
+
+function linkOrText(label, url) {
+  const u = url ? safeUrl(url) : null;
+  return u ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(label)}</a>` : esc(label);
+}
+
+function summaryBox(text, meta) {
+  return `<div class="k-summary"><div class="k-summary-title">Executive Summary</div>
+    <div class="k-summary-text">${esc(clamp(text, 1200))}</div>
+    ${meta ? `<div class="k-meta">${esc(meta)}</div>` : ""}</div>`;
+}
+
+function storyCard(s) {
+  const title = s.title || s.name || "(untitled)";
+  const url = s.link || s.url;
+  const chips = [s.source, s.date, s.time, s.bias && s.bias !== "Low" ? "bias: " + s.bias : ""]
+    .filter(Boolean).map(c => `<span class="chip">${esc(c)}</span>`).join("");
+  return `<div class="k-item">
+    <div class="k-item-title">${linkOrText(title, url)}</div>
+    ${s.description ? `<div class="k-item-desc">${esc(clamp(s.description, 420))}</div>` : ""}
+    ${chips ? `<div class="k-chips">${chips}</div>` : ""}
+  </div>`;
+}
+
+function gapCard(g) {
+  const topic = g.gap_topic || g.topic || g.title || "Knowledge gap";
+  const reason = g.gap_reason || g.reason || g.description || "";
+  const research = g.research_topics || g.research || "";
+  return `<div class="k-gap">
+    <div class="k-item-title">${esc(topic)}</div>
+    ${reason ? `<div class="k-item-desc">${esc(clamp(reason, 380))}</div>` : ""}
+    ${research ? `<div class="k-chips">${esc(clamp(research, 200))}</div>` : ""}
+    ${g.found_urls && String(g.found_urls).trim() ? `<div class="k-meta">urls: ${esc(clamp(String(g.found_urls).trim(), 160))}</div>` : ""}
+  </div>`;
+}
+
+function timelineRow(e) {
+  const date = e.dateDisplay || e.date || "";
+  const srcs = Array.isArray(e.sources) ? e.sources.join(", ") : (e.source || "");
+  return `<div class="k-time"><span class="k-time-date">${esc(date)}</span>
+    <span>${linkOrText(e.title || "(event)", e.link)}</span>
+    ${srcs ? `<span class="k-meta"> · ${esc(srcs)}</span>` : ""}</div>`;
+}
+
+function tableBlock(arr, maxRows = 8) {
+  if (!arr.length) return "";
+  const cols = [...new Set(arr.slice(0, 8).flatMap(o => (o && typeof o === "object" ? Object.keys(o) : ["value"])))].slice(0, 9);
+  const rows = arr.slice(0, maxRows).map(o => {
+    const cells = cols.map(c => {
+      let v = o && typeof o === "object" ? o[c] : o;
+      if (v && typeof v === "object") v = JSON.stringify(v);
+      return `<td>${esc(clamp(v == null ? "" : String(v), 140))}</td>`;
+    }).join("");
+    return `<tr>${cells}</tr>`;
+  }).join("");
+  return `<div class="k-tablewrap"><table class="k-table">
+    <thead><tr>${cols.map(c => `<th>${esc(c)}</th>`).join("")}</tr></thead>
+    <tbody>${rows}</tbody></table>
+    ${arr.length > maxRows ? `<div class="k-meta">+ ${arr.length - maxRows} more rows</div>` : ""}</div>`;
+}
+
+function itemCard(o) {
+  if (o && typeof o === "object") {
+    const title = o.title || o.name || o.topic || o.gap_topic || o.url || o.link || "(item)";
+    const url = o.link || o.url;
+    const desc = o.description || o.summary || o.reason || o.gap_reason || o.excerpt || o.body || "";
+    const chips = [o.source, o.time, o.date, o.pubDate, o.type].filter(Boolean)
+      .map(c => `<span class="chip">${esc(String(c))}</span>`).join("");
+    return `<div class="k-item">
+      <div class="k-item-title">${linkOrText(String(title).slice(0, 160), url)}</div>
+      ${desc ? `<div class="k-item-desc">${esc(clamp(String(desc), 380))}</div>` : ""}
+      ${chips ? `<div class="k-chips">${chips}</div>` : ""}
+    </div>`;
+  }
+  return `<div class="k-item"><div class="k-item-title">${esc(String(o))}</div></div>`;
+}
+
+function renderFeed(text) {
+  const doc = new DOMParser().parseFromString(text, "text/xml");
+  const channel = doc.querySelector("channel");
+  const chTitle = channel ? channel.querySelector("title")?.textContent : "";
+  const items = [...doc.querySelectorAll("item")].slice(0, 15);
+  const body = items.map(it => {
+    const title = it.querySelector("title")?.textContent || "(untitled)";
+    const link = it.querySelector("link")?.textContent;
+    const desc = it.querySelector("description")?.textContent || "";
+    const date = it.querySelector("pubDate")?.textContent || "";
+    const cats = [...it.querySelectorAll("category")].map(c => c.textContent).slice(0, 8)
+      .map(c => `<span class="chip">${esc(c)}</span>`).join("");
+    return `<div class="k-item">
+      <div class="k-item-title">${linkOrText(title, link)}</div>
+      <div class="k-item-desc">${esc(clamp(desc, 420))}</div>
+      <div class="k-chips">${cats}${date ? `<span class="chip">${esc(date)}</span>` : ""}</div>
+    </div>`;
+  }).join("");
+  const err = items.filter(i => (i.querySelector("description")?.textContent || "").startsWith("Failed"))
+    .length;
+  return `${chTitle ? `<div class="k-meta">${esc(chTitle)}</div>` : ""}${body}
+    ${err ? `<div class="k-meta">${err} item(s) with generation errors upstream</div>` : ""}`;
+}
+
+function csvRows(text) {
+  const rows = [];
+  let row = [], cell = "", q = false;
+  for (let i = 0; i < text.length && rows.length < 40; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; }
+      else if (c === '"') q = false;
+      else cell += c;
+    } else if (c === '"') q = true;
+    else if (c === ",") { row.push(cell); cell = ""; }
+    else if (c === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+    else if (c !== "\r") cell += c;
+  }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+function renderCsv(text) {
+  const rows = csvRows(text);
+  if (!rows.length) return `<p class="k-meta">empty table</p>`;
+  const head = rows[0];
+  const body = rows.slice(1, 31).map(r => `<tr>${r.map(c => `<td>${esc(clamp(c, 120))}</td>`).join("")}</tr>`).join("");
+  const totalLines = text.split("\n").length - 1;
+  return `<div class="k-tablewrap"><table class="k-table">
+    <thead><tr>${head.map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead>
+    <tbody>${body}</tbody></table>
+    <div class="k-meta">showing ${Math.min(30, rows.length - 1)} of ~${totalLines} rows</div></div>`;
+}
+
+function renderJson(name, text) {
+  let obj;
+  try { obj = JSON.parse(text); } catch (e) {
+    return `<pre class="k-pre">${esc(clamp(text, 4000))}</pre>`;
+  }
+  let out = "";
+  const arrOf = (v) => Array.isArray(v) && v.length && typeof v[0] === "object";
+
+  if (obj && typeof obj === "object" && !Array.isArray(obj)) {
+    if (typeof obj.masterDigest === "string") out += summaryBox(obj.masterDigest, obj.lastGenerated || "");
+    if (typeof obj.summary === "string" && obj.summary.length > 40) out += summaryBox(obj.summary, obj.generated || "");
+    if (obj.type === "FeatureCollection" && Array.isArray(obj.features)) {
+      out += `<div class="k-meta">${obj.features.length} geo features</div>` +
+             tableBlock(obj.features.map(f => f.properties || {}), 8);
+    }
+    if (arrOf(obj.stories)) out += obj.stories.slice(0, 12).map(storyCard).join("") +
+      (obj.stories.length > 12 ? `<div class="k-meta">+ ${obj.stories.length - 12} more stories (of ${obj.stories.length})</div>` : "");
+    if (arrOf(obj.events)) out += obj.events.slice(0, 12).map(timelineRow).join("");
+    if (arrOf(obj.data)) out += tableBlock(obj.data, 8);
+    if (arrOf(obj.articles)) out += obj.articles.slice(0, 12).map(storyCard).join("");
+    if (arrOf(obj.links)) out += obj.links.slice(0, 12).map(itemCard).join("");
+    if (arrOf(obj.items)) out += obj.items.slice(0, 12).map(itemCard).join("");
+    if (arrOf(obj.gaps)) out += obj.gaps.slice(0, 8).map(gapCard).join("");
+    if (arrOf(obj.scout_results)) out += obj.scout_results.slice(0, 8).map(gapCard).join("");
+    if (arrOf(obj.results)) out += tableBlock(obj.results, 8);
+    if (arrOf(obj.cases)) out += tableBlock(obj.cases, 8);
+    if (arrOf(obj.checklist)) out += tableBlock(obj.checklist, 8);
+    if (!out) {
+      const scalars = Object.entries(obj).filter(([, v]) => v == null || typeof v !== "object");
+      const arrays = Object.entries(obj).filter(([, v]) => Array.isArray(v) && v.length && typeof v[0] === "object");
+      if (scalars.length) {
+        out += `<table class="k-table kv"><tbody>${scalars.map(([k, v]) =>
+          `<tr><th>${esc(k)}</th><td>${esc(clamp(String(v), 200))}</td></tr>`).join("")}</tbody></table>`;
+      }
+      for (const [, v] of arrays.slice(0, 2)) out += tableBlock(v, 6);
+      if (!scalars.length && !arrays.length) out += `<pre class="k-pre">${esc(clamp(JSON.stringify(obj, null, 2), 4000))}</pre>`;
+    }
+    return out;
+  }
+  if (Array.isArray(obj)) {
+    return arrOf(obj) ? tableBlock(obj, 8) :
+      obj.slice(0, 20).map(itemCard).join("");
+  }
+  return `<p>${esc(String(obj))}</p>`;
+}
+
+function renderKFile(name, text) {
+  const n = name.toLowerCase();
+  try {
+    if (n.endsWith(".xml")) return renderFeed(text);
+    if (n.endsWith(".json") || n.endsWith(".geojson")) return renderJson(name, text);
+    if (n.endsWith(".md")) return `<div class="readme k-md">${md(text.slice(0, 60000))}</div>`;
+    if (n.endsWith(".csv")) return renderCsv(text);
+  } catch (e) {
+    return `<pre class="k-pre">${esc(clamp(text, 3000))}</pre>`;
+  }
+  return `<pre class="k-pre">${esc(clamp(text, 3000))}</pre>`;
+}
+
+function kcard(k) {
+  const files = Object.entries(k.files).map(([n, t]) =>
+    `<div class="kfile"><div class="kfname">${esc(n)}</div>${renderKFile(n, t)}</div>`).join("");
+  return `<div class="kcard">
+    <div class="khead">
+      <a href="#/m/${encodeURIComponent(k.repo)}/${encodeURIComponent(k.member)}">${esc(k.member)}</a>
+      <span class="repo-tag">${esc(k.repo)}</span>
+      <span class="k-count">${Object.keys(k.files).length} data file(s)</span>
+    </div>
+    <div class="kbody">${files}</div>
+  </div>`;
+}
+
+function knowledgeSection() {
+  if (!KNOW.length) return "";
+  const order = (r) => { const i = REPO_ORDER.indexOf(r); return i < 0 ? 99 : i; };
+  const repos = [...new Set(KNOW.map(k => k.repo))].sort((a, b) => order(a) - order(b));
+  const groups = repos.map(r =>
+    `<div class="kgroup">
+       <h3>${esc(r)}</h3>
+       <div class="kgrid">${KNOW.filter(k => k.repo === r).map(kcard).join("")}</div>
+     </div>`).join("");
+  return `<div class="section-title">Knowledge — actual results, feeds, digests &amp; reports from all repos</div>${groups}`;
 }
 
 /* ---------- search ---------- */
