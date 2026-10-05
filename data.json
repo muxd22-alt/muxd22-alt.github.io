@@ -1,4 +1,460 @@
 {
-  "generated_at": null,
-  "repos": []
+  "generated_at": "2026-10-05T12:28:40.768Z",
+  "repos": [
+    {
+      "name": "quant-econ",
+      "description": "Monorepo: TASI/UHI/sector-economics, market dashboards and quant tools. Consolidated from 14 repos.",
+      "url": "https://github.com/muxd22-alt/quant-econ",
+      "stars": 0,
+      "size_kb": 0,
+      "pushed_at": "2026-10-05T12:11:43Z",
+      "archived": false,
+      "languages": {
+        "Python": 2805717,
+        "TypeScript": 589251,
+        "HTML": 438510,
+        "JavaScript": 187095,
+        "CSS": 121106,
+        "Shell": 15498,
+        "Jinja": 9579,
+        "PowerShell": 6556,
+        "Dockerfile": 1950,
+        "Batchfile": 154
+      },
+      "members": [
+        "AcomZ",
+        "BlockMesh",
+        "China",
+        "SectorShift",
+        "TASI-Quant-Replicator-Public",
+        "TASI-Quant-Replicator",
+        "TASI",
+        "UHI_SAUDI",
+        "UHI_tracker",
+        "daily_stock_analysis",
+        "future_proofing",
+        "post_labour_tracker",
+        "radar_2"
+      ],
+      "member_stats": {
+        "AcomZ": {
+          "files": 206,
+          "bytes": 35744623
+        },
+        "BlockMesh": {
+          "files": 5,
+          "bytes": 64476
+        },
+        "China": {
+          "files": 23,
+          "bytes": 375721
+        },
+        "SectorShift": {
+          "files": 17,
+          "bytes": 964348
+        },
+        "TASI-Quant-Replicator-Public": {
+          "files": 9,
+          "bytes": 112621
+        },
+        "TASI-Quant-Replicator": {
+          "files": 22,
+          "bytes": 309946
+        },
+        "TASI": {
+          "files": 8,
+          "bytes": 70610
+        },
+        "UHI_SAUDI": {
+          "files": 9,
+          "bytes": 106622
+        },
+        "UHI_tracker": {
+          "files": 5,
+          "bytes": 26220
+        },
+        "daily_stock_analysis": {
+          "files": 489,
+          "bytes": 71734710
+        },
+        "future_proofing": {
+          "files": 14,
+          "bytes": 604201
+        },
+        "post_labour_tracker": {
+          "files": 6,
+          "bytes": 84951
+        },
+        "radar_2": {
+          "files": 10,
+          "bytes": 31624
+        }
+      },
+      "commits": [
+        {
+          "sha": "db16d38",
+          "msg": "Link the shared MUXD knowledge dashboard",
+          "date": "2026-10-05T12:11:32Z",
+          "author": "muxd22-alt"
+        },
+        {
+          "sha": "0da20a7",
+          "msg": "CI: tolerate JSONC, warn on pre-existing syntax issues, fix secret scan logic",
+          "date": "2026-10-05T12:04:27Z",
+          "author": "muxd22-alt"
+        },
+        {
+          "sha": "5cf5086",
+          "msg": "Initial consolidation of quant-econ monorepo (muxd22-alt migration)",
+          "date": "2026-10-05T11:37:04Z",
+          "author": "muxd22-alt"
+        }
+      ],
+      "runs": [
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/quant-econ/actions/runs/37307845473",
+          "created_at": "2026-10-05T12:11:45Z"
+        },
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/quant-econ/actions/runs/37307056611",
+          "created_at": "2026-10-05T12:04:39Z"
+        },
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/muxd22-alt/quant-econ/actions/runs/37305731107",
+          "created_at": "2026-10-05T11:52:25Z"
+        }
+      ]
+    },
+    {
+      "name": "news-dashboards",
+      "description": "Monorepo: news & media dashboards (Iran/global/AI research), HUD live platform, homepage. Consolidated from 8 repos.",
+      "url": "https://github.com/muxd22-alt/news-dashboards",
+      "stars": 0,
+      "size_kb": 0,
+      "pushed_at": "2026-10-05T12:11:44Z",
+      "archived": false,
+      "languages": {
+        "TypeScript": 600986,
+        "HTML": 436601,
+        "JavaScript": 188778,
+        "Python": 132716,
+        "CSS": 53177,
+        "Astro": 34109,
+        "Shell": 19771
+      },
+      "members": [
+        "MUXDLab-Homepage",
+        "PAI",
+        "ai_research_dashboard",
+        "global-news-dashboard",
+        "hud_live",
+        "hudhud-platform",
+        "iran-news-dashboard"
+      ],
+      "member_stats": {
+        "MUXDLab-Homepage": {
+          "files": 31,
+          "bytes": 1779363
+        },
+        "PAI": {
+          "files": 75,
+          "bytes": 363182
+        },
+        "ai_research_dashboard": {
+          "files": 42,
+          "bytes": 4413943
+        },
+        "global-news-dashboard": {
+          "files": 7,
+          "bytes": 33867
+        },
+        "hud_live": {
+          "files": 155,
+          "bytes": 11060168
+        },
+        "hudhud-platform": {
+          "files": 17,
+          "bytes": 107896
+        },
+        "iran-news-dashboard": {
+          "files": 15,
+          "bytes": 505708
+        }
+      },
+      "commits": [
+        {
+          "sha": "8e66672",
+          "msg": "Link the shared MUXD knowledge dashboard",
+          "date": "2026-10-05T12:11:34Z",
+          "author": "muxd22-alt"
+        },
+        {
+          "sha": "c71acf3",
+          "msg": "CI: tolerate JSONC, warn on pre-existing syntax issues, fix secret scan logic",
+          "date": "2026-10-05T12:04:25Z",
+          "author": "muxd22-alt"
+        },
+        {
+          "sha": "8469a07",
+          "msg": "Initial consolidation of news-dashboards monorepo (muxd22-alt migration)",
+          "date": "2026-10-05T11:36:58Z",
+          "author": "muxd22-alt"
+        }
+      ],
+      "runs": [
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/news-dashboards/actions/runs/37307849306",
+          "created_at": "2026-10-05T12:11:47Z"
+        },
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/news-dashboards/actions/runs/37307053174",
+          "created_at": "2026-10-05T12:04:37Z"
+        },
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/muxd22-alt/news-dashboards/actions/runs/37305758503",
+          "created_at": "2026-10-05T11:52:41Z"
+        }
+      ]
+    },
+    {
+      "name": "agent-tools",
+      "description": "Monorepo: agent/LLM tooling - Signal-OS, AGI tracker, newsjack, autoresearch, research runners. Consolidated from 13 repos.",
+      "url": "https://github.com/muxd22-alt/agent-tools",
+      "stars": 0,
+      "size_kb": 0,
+      "pushed_at": "2026-10-05T12:11:46Z",
+      "archived": false,
+      "languages": {
+        "HTML": 43340587,
+        "Python": 7078478,
+        "Go": 660305,
+        "C++": 370434,
+        "Shell": 338945,
+        "JavaScript": 327162,
+        "TypeScript": 242941,
+        "Rust": 165555,
+        "CSS": 64911,
+        "PowerShell": 32092,
+        "Jupyter Notebook": 16330,
+        "Dockerfile": 9071,
+        "CMake": 7780,
+        "Makefile": 4432,
+        "PLpgSQL": 1704,
+        "Batchfile": 1460,
+        "Go Template": 1183
+      },
+      "members": [
+        "AGI_Track",
+        "CLI-Anything",
+        "MSA",
+        "OpenViking",
+        "Signal-OS",
+        "autoresearch",
+        "jobs",
+        "laya-coreml",
+        "newsjack",
+        "reseaech",
+        "superpowers"
+      ],
+      "member_stats": {
+        "AGI_Track": {
+          "files": 104,
+          "bytes": 5419278
+        },
+        "CLI-Anything": {
+          "files": 320,
+          "bytes": 8827054
+        },
+        "MSA": {
+          "files": 40,
+          "bytes": 1254915
+        },
+        "OpenViking": {
+          "files": 1497,
+          "bytes": 21015956
+        },
+        "Signal-OS": {
+          "files": 19,
+          "bytes": 63683
+        },
+        "autoresearch": {
+          "files": 15,
+          "bytes": 823519
+        },
+        "jobs": {
+          "files": 362,
+          "bytes": 44029344
+        },
+        "laya-coreml": {
+          "files": 154,
+          "bytes": 37684408
+        },
+        "newsjack": {
+          "files": 4313,
+          "bytes": 55067789
+        },
+        "reseaech": {
+          "files": 13,
+          "bytes": 399699
+        },
+        "superpowers": {
+          "files": 125,
+          "bytes": 662411
+        }
+      },
+      "commits": [
+        {
+          "sha": "8247e73",
+          "msg": "Link the shared MUXD knowledge dashboard",
+          "date": "2026-10-05T12:11:35Z",
+          "author": "muxd22-alt"
+        },
+        {
+          "sha": "5458260",
+          "msg": "CI: tolerate JSONC, warn on pre-existing syntax issues, fix secret scan logic",
+          "date": "2026-10-05T12:04:18Z",
+          "author": "muxd22-alt"
+        },
+        {
+          "sha": "0728817",
+          "msg": "Initial consolidation of agent-tools monorepo (muxd22-alt migration)",
+          "date": "2026-10-05T11:36:36Z",
+          "author": "muxd22-alt"
+        }
+      ],
+      "runs": [
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/agent-tools/actions/runs/37307853196",
+          "created_at": "2026-10-05T12:11:49Z"
+        },
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/agent-tools/actions/runs/37307042102",
+          "created_at": "2026-10-05T12:04:31Z"
+        },
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/muxd22-alt/agent-tools/actions/runs/37305876013",
+          "created_at": "2026-10-05T11:53:45Z"
+        }
+      ]
+    },
+    {
+      "name": "geo-unity",
+      "description": "Monorepo: geospatial & 3D - cesium-unity, city builders, unity roadmap, web 3D blueprint. Consolidated from 5 repos.",
+      "url": "https://github.com/muxd22-alt/geo-unity",
+      "stars": 0,
+      "size_kb": 0,
+      "pushed_at": "2026-10-05T12:11:48Z",
+      "archived": false,
+      "languages": {
+        "C#": 1924788,
+        "C++": 652853,
+        "JavaScript": 266048,
+        "HTML": 19989,
+        "CMake": 19039,
+        "Python": 6043,
+        "HLSL": 4106,
+        "CSS": 3723,
+        "ShaderLab": 1429
+      },
+      "members": [
+        "1ooo",
+        "CityBuilder",
+        "GeoJsonCityBuilder",
+        "cesium-unity",
+        "unity-roadmap"
+      ],
+      "member_stats": {
+        "1ooo": {
+          "files": 118,
+          "bytes": 1743109
+        },
+        "CityBuilder": {
+          "files": 149,
+          "bytes": 8897194
+        },
+        "GeoJsonCityBuilder": {
+          "files": 67,
+          "bytes": 68561
+        },
+        "cesium-unity": {
+          "files": 593,
+          "bytes": 6389847
+        },
+        "unity-roadmap": {
+          "files": 2,
+          "bytes": 18223
+        }
+      },
+      "commits": [
+        {
+          "sha": "683791a",
+          "msg": "Link the shared MUXD knowledge dashboard",
+          "date": "2026-10-05T12:11:37Z",
+          "author": "muxd22-alt"
+        },
+        {
+          "sha": "e914c3d",
+          "msg": "CI: tolerate JSONC, warn on pre-existing syntax issues, fix secret scan logic",
+          "date": "2026-10-05T12:04:20Z",
+          "author": "muxd22-alt"
+        },
+        {
+          "sha": "a086e9f",
+          "msg": "Initial consolidation of geo-unity monorepo (muxd22-alt migration)",
+          "date": "2026-10-05T11:36:39Z",
+          "author": "muxd22-alt"
+        }
+      ],
+      "runs": [
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/geo-unity/actions/runs/37307854899",
+          "created_at": "2026-10-05T12:11:50Z"
+        },
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/geo-unity/actions/runs/37307045643",
+          "created_at": "2026-10-05T12:04:33Z"
+        },
+        {
+          "name": "CI",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/muxd22-alt/geo-unity/actions/runs/37305504834",
+          "created_at": "2026-10-05T11:50:19Z"
+        }
+      ]
+    }
+  ]
 }
