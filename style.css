@@ -301,3 +301,128 @@ footer p { margin: 2px 0; }
 .k-table.kv th { width: 34%; color: var(--text); background: none; position: static; }
 .k-pre { font: 12px/1.5 ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-word; color: var(--muted); margin: 0; }
 .k-md { border: none; padding: 0; }
+
+/* ---------- dashboards ---------- */
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  background: #0b0f14;
+  flex-wrap: wrap;
+}
+.tabs a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13.5px;
+  padding: 10px 14px;
+  border-bottom: 2px solid transparent;
+}
+.tabs a:hover { color: var(--text); }
+.tabs a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.dash-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.dash-title { font-size: 21px; font-weight: 700; }
+.dash-sub { color: var(--muted); font-size: 13px; margin-top: 3px; max-width: 780px; }
+.dash-side { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.kpi {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  min-width: 0;
+}
+.kpi-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+}
+.kpi-value { font-size: 22px; font-weight: 700; margin-top: 3px; overflow-wrap: anywhere; }
+.kpi-sub { font-size: 12px; color: var(--muted); margin-top: 3px; overflow-wrap: anywhere; }
+.kpi.up .kpi-value { color: var(--green); }
+.kpi.down .kpi-value { color: #f85149; }
+
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 0;
+}
+.panel.span2 { grid-column: span 2; }
+.panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel2);
+}
+.panel-body { padding: 12px 14px; }
+
+.bars { display: flex; flex-direction: column; gap: 7px; }
+.bar-row {
+  display: grid;
+  grid-template-columns: minmax(90px, 38%) 1fr auto;
+  gap: 10px;
+  align-items: center;
+  font-size: 12.5px;
+}
+.bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { display: block; height: 8px; background: #21262d; border-radius: 6px; overflow: hidden; }
+.bar-track.slim { width: 120px; }
+.bar-fill { display: block; height: 100%; background: var(--accent); border-radius: 6px; }
+.bar-fill.good { background: var(--green); }
+.bar-fill.warn { background: #d29922; }
+.bar-fill.bad { background: #f85149; }
+.bar-val { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; white-space: nowrap; }
+
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: #21262d;
+  color: var(--text);
+}
+.badge.good { background: #23863633; color: var(--green); }
+.badge.warn { background: #d2992226; color: #d29922; }
+.badge.bad { background: #da363333; color: #f85149; }
+
+.sub-h {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+  margin: 12px 0 6px;
+}
+.lane-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.lane-h { font-size: 12.5px; font-weight: 600; color: #d2a8ff; margin-bottom: 4px; }
+.call-line { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 6px; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-left: 6px; vertical-align: middle; }
+.mini-stats { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+
+@media (max-width: 900px) {
+  .panel.span2 { grid-column: auto; }
+}

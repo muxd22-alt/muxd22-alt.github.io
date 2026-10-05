@@ -11,13 +11,22 @@
 <header>
   <div class="brand">
     <h1>MUXD Content Dashboard</h1>
-    <p class="sub">Every file, folder and README across all repos — unified. <span id="generated"></span></p>
+    <p class="sub">Five live dashboards built from the data files inside our monorepos — plus the full file explorer. <span id="generated"></span></p>
   </div>
   <div class="searchbox">
     <input id="search" type="search" placeholder="Search files, folders, members across all repos…" autocomplete="off">
     <div id="results" class="results" hidden></div>
   </div>
 </header>
+
+<nav class="tabs" id="tabs">
+  <a href="#/d/quant-econ">Quant Econ</a>
+  <a href="#/d/news-dashboards">News Intel</a>
+  <a href="#/d/agent-tools">Agent Lab</a>
+  <a href="#/d/mobile-android">Mobile &amp; Embedded</a>
+  <a href="#/d/geo-unity">Geo &amp; Unity</a>
+  <a href="#/">Explorer</a>
+</nav>
 
 <div class="layout">
   <aside id="sidebar">

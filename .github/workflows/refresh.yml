@@ -37,6 +37,21 @@ jobs:
             const KDATA = /(^|\/)(rss|feed|atom)\.xml$|(^|\/)(data|news[\w-]*|feed[\w-]*|gaps?[\w-]*|scout[\w-]*|digest[\w-]*|summary[\w-]*|timeline[\w-]*|items[\w-]*|links[\w-]*|stories[\w-]*|results[\w-]*)\.json$/i;
             const KDOC  = /(ROADMAP|ARCHITECTURE|REPORT|SUMMARY|DIGEST|BRIEF|FINDINGS|ANALYSIS|RESULTS|STATE)[\w-]*\.md$/i;
             const KTABLE = /\.(geojson|csv)$/i;
+            // curated extras: real dashboard inputs the auto-patterns don't match
+            const EXTRAS = {
+              'news-dashboards': [
+                'repos/ai_research_dashboard/src/data/stocks.json',
+                'repos/iran-news-dashboard/data/war-metrics.json',
+              ],
+              'agent-tools': [
+                'repos/laya-coreml/benchmarks/results/ane-energy-summary.json',
+              ],
+              'geo-unity': [
+                'repos/1ooo/data/laya-reference.json',
+                'repos/CityBuilder/CityBuilder/Packages/manifest.json',
+                'repos/cesium-unity/ThirdParty.json',
+              ],
+            };
             const KSKIP = /(^|\/)(node_modules|\.venv|venv|dist|__pycache__|\.git|site-packages|\.next|target|Pods|\.gradle)(\/|$)|_variants|third_party/;
             const MAX_FILE = 250_000;   // per knowledge file
             const PER_MEMBER = 4;
@@ -102,11 +117,13 @@ jobs:
               }
 
               // ---- discover knowledge files in this repo ----
+              const extraSet = new Set(EXTRAS[t.name] || []);
               const byMember = new Map();
               for (const [path, size] of files) {
                 if (size > MAX_FILE || KSKIP.test(path)) continue;
                 if (!t.pinned && !path.startsWith('repos/')) continue;
-                const tier = KDATA.test(path) ? 0 : KDOC.test(path) ? 1 : KTABLE.test(path) ? 2 : -1;
+                let tier = KDATA.test(path) ? 0 : KDOC.test(path) ? 1 : KTABLE.test(path) ? 2 : -1;
+                if (extraSet.has(path)) tier = -2;
                 if (tier < 0) continue;
                 const member = t.pinned ? t.name : path.split('/')[1];
                 const memberPath = t.pinned ? '' : 'repos/' + member;
