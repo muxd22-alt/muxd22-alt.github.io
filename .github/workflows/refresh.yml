@@ -43,7 +43,7 @@ jobs:
               const { data: commits } = await github.rest.repos.listCommits({
                 owner: 'muxd22-alt', repo: name, per_page: 20,
               });
-              const { data: runs } = await github.rest.actions.listWorkflowRuns({
+              const { data: runs } = await github.rest.actions.listWorkflowRunsForRepo({
                 owner: 'muxd22-alt', repo: name, per_page: 6,
               });
 
