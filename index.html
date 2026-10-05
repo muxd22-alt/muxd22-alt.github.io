@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MUXD Knowledge Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>MUXD Knowledge Dashboard</h1>
+  <p class="sub">Combined results of the consolidated monorepos &middot; generated from GitHub <span id="generated">…</span></p>
+</header>
+
+<main>
+  <section id="cards" class="grid"></section>
+
+  <section class="panel">
+    <h2>Recent commits <span class="hint">(all monorepos)</span></h2>
+    <table id="commits"><thead>
+      <tr><th>repo</th><th>date</th><th>author</th><th>message</th></tr>
+    </thead><tbody></tbody></table>
+  </section>
+
+  <section class="panel">
+    <h2>CI status <span class="hint">(latest workflow runs)</span></h2>
+    <table id="runs"><thead>
+      <tr><th>repo</th><th>workflow</th><th>state</th><th>result</th></tr>
+    </thead><tbody></tbody></table>
+  </section>
+
+  <section class="panel">
+    <h2>Members index</h2>
+    <div id="members"></div>
+  </section>
+</main>
+
+<footer>
+  <p>Auto-refreshed twice daily by GitHub Actions &middot; source: <a href="https://github.com/muxd22-alt/muxd22-alt.github.io">muxd22-alt.github.io</a></p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
