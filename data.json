@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-05T12:28:40.768Z",
+  "generated_at": "2026-10-05T12:45:47.028Z",
   "repos": [
     {
       "name": "quant-econ",
@@ -112,6 +112,13 @@
       ],
       "runs": [
         {
+          "name": "Daily Digest",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/quant-econ/actions/runs/37309988961",
+          "created_at": "2026-10-05T12:30:20Z"
+        },
+        {
           "name": "CI",
           "status": "completed",
           "conclusion": "success",
@@ -211,6 +218,13 @@
         }
       ],
       "runs": [
+        {
+          "name": "Daily Digest",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/news-dashboards/actions/runs/37309993138",
+          "created_at": "2026-10-05T12:30:22Z"
+        },
         {
           "name": "CI",
           "status": "completed",
@@ -342,6 +356,13 @@
       ],
       "runs": [
         {
+          "name": "Daily Digest",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/agent-tools/actions/runs/37309996661",
+          "created_at": "2026-10-05T12:30:24Z"
+        },
+        {
           "name": "CI",
           "status": "completed",
           "conclusion": "success",
@@ -433,6 +454,13 @@
         }
       ],
       "runs": [
+        {
+          "name": "Daily Digest",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/muxd22-alt/geo-unity/actions/runs/37310004778",
+          "created_at": "2026-10-05T12:30:28Z"
+        },
         {
           "name": "CI",
           "status": "completed",
